@@ -1,0 +1,38 @@
+#pragma once
+
+#include <cstddef>
+#include <stdexcept>
+
+namespace caches {
+
+template <typename T, typename KeyT = int>
+class ICache {
+public:
+    virtual bool lookup_update(KeyT key, T value) = 0;
+    virtual void clear() = 0;
+    virtual size_t size() = 0;
+    virtual size_t capacity() = 0;
+    virtual ~ICache() = default;
+};
+
+enum class CacheType {
+#ifdef ENABLE_LRU_CACHE
+    LRU,
+#endif
+#ifdef ENABLE_ARC_CACHE
+    ARC,
+#endif
+#ifdef ENABLE_OPTIMAL_CACHE
+    OPTIMAL,
+#endif
+};
+
+}
+
+
+
+//-----------------------------------------------------------------------------
+//
+// ARC (Adaptive Replacement Cache) implementation
+//
+//----------------------------------------------------------------------------
