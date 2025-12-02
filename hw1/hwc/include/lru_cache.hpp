@@ -22,8 +22,7 @@ public:
             throw std::invalid_argument("Cache size must be positive");
     }
 
-    template <typename F>
-    bool lookup_update(KeyT key, F slow_get_page) override;
+    bool lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) override;
 
     void clear() override {
         cache_.clear();
@@ -41,8 +40,7 @@ public:
 };
 
 template <typename T, typename KeyT>
-template <typename F>
-bool LRUCache<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
+bool LRUCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) {
     auto hit = hash_.find(key);
     if(hit != hash_.end()) {
         auto eltit = hit->second;

@@ -1,8 +1,7 @@
-#include <lru_cache.hpp>
 #include <iostream>
 
-//slow get page imitation
-int slow_get_page_int(int key) { return key; }
+#include "get_pages.hpp"
+#include "lru_cache.hpp"
 
 int main() {
     size_t cache_size, num_elems, hits;
@@ -19,7 +18,7 @@ int main() {
     for(size_t i = 0; i < num_elems; i++) {
         int elem;
         std::cin >> elem;
-        if(lru_cache.lookup_update(elem, slow_get_page_int(elem)))
+        if(lru_cache.lookup_update(elem, page_getters::slow_get_page_int))
             hits++;
     }
 
