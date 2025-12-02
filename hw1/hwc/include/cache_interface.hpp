@@ -10,8 +10,8 @@ class ICache {
 public:
     virtual bool lookup_update(KeyT key, T value) = 0;
     virtual void clear() = 0;
-    virtual size_t size() = 0;
-    virtual size_t capacity() = 0;
+    virtual size_t size() const noexcept = 0;
+    virtual size_t capacity() const noexcept = 0;
     virtual ~ICache() = default;
 };
 
