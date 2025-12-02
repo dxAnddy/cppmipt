@@ -4,7 +4,7 @@
 #include "lru_cache.hpp"
 
 int main() {
-    size_t cache_size, num_elems, hits;
+    size_t cache_size, num_elems, hits = 0;
 
     std::cin >> cache_size >> num_elems;
 
