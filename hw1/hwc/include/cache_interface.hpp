@@ -8,7 +8,8 @@ namespace caches {
 template <typename T, typename KeyT = int>
 class ICache {
 public:
-    virtual bool lookup_update(KeyT key, T value) = 0;
+    template <typename F>
+    virtual bool lookup_update(KeyT key, F slow_get_page) = 0;
     virtual void clear() = 0;
     virtual size_t size() const noexcept = 0;
     virtual size_t capacity() const noexcept = 0;
@@ -28,11 +29,3 @@ enum class CacheType {
 };
 
 }
-
-
-
-//-----------------------------------------------------------------------------
-//
-// ARC (Adaptive Replacement Cache) implementation
-//
-//----------------------------------------------------------------------------
