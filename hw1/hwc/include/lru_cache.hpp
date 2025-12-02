@@ -23,7 +23,7 @@ public:
     }
 
 
-    bool lookup_update(KeyT ket, T value) override;
+    bool lookup_update(KeyT key, T value) override;
 
     void clear() override {
         cache_.clear();
@@ -41,9 +41,21 @@ public:
 };
 
 template <typename T, typename KeyT>
-bool lookup_update(KeyT ket, T value) {
+bool LRUCache<T, KeyT>::lookup_update(KeyT key, T value) {
+    auto hit = hash_.find(key);
+    if(hit != hash_.end()) {
+        auto eltit = hit->second;
+        cache_.splice(cache_.begin(), cache_, eltit);
+        return true;
+    }
+    if(cache_.size() == capacity_) {
+        hash_.erase(cache_.back().first);
+        cache_.pop_back();
+    }
 
-    
+    cache_.emplace_front(key, value);
+    hash_[key] = cache_.begin();
+    return false;
 }
 
 }
