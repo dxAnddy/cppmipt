@@ -30,6 +30,7 @@ public:
         return cache_.size();
     }
 
+    ~LRUCache() override = default;
 };
 
 template <typename T, typename KeyT>
