@@ -1,7 +1,7 @@
 #pragma once
-#define ENABLE_LRU_CACHE
-#ifdef ENABLE_LRU_CACHE
+
 #include "cache_interface.hpp"
+
 #include <list>
 #include <unordered_map>
 
@@ -10,16 +10,13 @@ namespace caches {
 template <typename T, typename KeyT = int>
 class LRUCache : public ICache<T, KeyT> {
 private:
-    size_t capacity_;
     std::list<std::pair<KeyT, T>> cache_;
 
     using ListIt = typename std::list<std::pair<KeyT, T>>::iterator;
     std::unordered_map<KeyT, ListIt> hash_;
 
 public:
-    LRUCache(size_t capacity) : capacity_(capacity) {
-        if(capacity == 0)
-            throw std::invalid_argument("Cache size must be positive");
+    LRUCache(size_t capacity) : ICache<T, KeyT>(capacity) {
     }
 
     bool lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) override;
@@ -33,10 +30,6 @@ public:
         return cache_.size();
     }
 
-    size_t capacity() const noexcept override {
-        return capacity_;
-    }
-
 };
 
 template <typename T, typename KeyT>
@@ -47,7 +40,7 @@ bool LRUCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_
         cache_.splice(cache_.begin(), cache_, eltit);
         return true;
     }
-    if(cache_.size() == capacity_) {
+    if(cache_.size() == this->capacity_) {
         hash_.erase(cache_.back().first);
         cache_.pop_back();
     }
@@ -58,4 +51,3 @@ bool LRUCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_
 }
 
 }
-#endif
