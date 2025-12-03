@@ -3,13 +3,28 @@ project(CACHE_PROJECT)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
-add_library(lru_cache INTERFACE)
-target_include_directories(lru_cache INTERFACE ${CMAKE_SOURCE_DIR}/include)
-target_compile_features(lru_cache INTERFACE cxx_std_17)
+option(BUILD_LRU "Build LRU Cache application" ON)
+option(BUILD_OPTIMAL "Build Optimal cache application" ON)
 
-add_executable(main_app ${CMAKE_SOURCE_DIR}/src/main.cpp)
-target_link_libraries(main_app lru_cache)
+add_library(cache_headers INTERFACE)
+target_include_directories(cache_headers INTERFACE ${CMAKE_SOURCE_DIR}/include)
+target_compile_features(cache_headers INTERFACE cxx_std_17)
+
+if(BUILD_LRU)
+    add_executable(cache_lru ${CMAKE_SOURCE_DIR}/src/main.cpp)
+    target_compile_definitions(cache_lru PRIVATE USE_LRU)
+    target_link_libraries(cache_lru cache_headers)
+    message(STATUS "Build LRU cache app: cache_lru")
+endif()
+
+if(BUILD_OPTIMAL)
+    add_executable(cache_opt ${CMAKE_SOURCE_DIR}/src/main.cpp)
+    target_compile_definitions(cache_opt PRIVATE USE_OPTIMAL)
+    target_link_libraries(cache_opt cache_headers)
+    message(STATUS "Build Optimal cache app: cache_opt")
+endif()
 
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)

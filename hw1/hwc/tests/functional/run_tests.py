@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parents[1]
 BUILD_DIR = PROJECT_ROOT / 'build'
 DATA_DIR = BASE_DIR / 'data'
-BINARY_PATH = BUILD_DIR / 'main_app'
+BINARY_PATH = BUILD_DIR / 'cache_lru'
 
 BUILD_DIR.mkdir(exist_ok = True)
 

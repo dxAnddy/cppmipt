@@ -17,10 +17,9 @@ private:
 
     size_t current_pos_ = 0;
     std::vector<KeyT> future_accesses_;
-    std::unordered_map<KeyT, std::vector<size_t>> request_positions_;
+    std::vector<size_t> next_uses_;
 
-    void build_accesses_positions();
-    size_t find_next_use_position(KeyT key);
+    void precalculate_next_uses();
     typename std::list<CacheEntry>::iterator find_entry_to_evict();
 
 public:
@@ -41,65 +40,65 @@ public:
 };
 
 template <typename T, typename KeyT>
-void OptimalCache<T, KeyT>::build_accesses_positions() {
-    future_accesses_.clear();
-    for(size_t i = 0 ; i < future_accesses_.size(); i++) {
-        request_positions_[future_accesses_[i]].push_back(i);
-    }
+void OptimalCache<T, KeyT>::precalculate_next_uses() {
+    next_uses_.resize(future_accesses_.size());
+    std::unordered_map<KeyT, size_t> next_position;
 
-    for(auto &entry : request_positions_) {
-        entry.second.push_back(std::numeric_limits<size_t>::max());
+    for(size_t i = 0 ; i < next_uses_.size(); i++)
+        next_uses_[i] = std::numeric_limits<size_t>::max();
+
+    for(size_t i = next_uses_.size() - 1; i > 0; --i) {
+        KeyT key = future_accesses_[i];
+        auto it = next_position.find(key);
+        if(it != next_position.end()) {
+            next_uses_[i] = it->second;
+        }
+        next_position[key] = i;
     }
 }
 
 template <typename T, typename KeyT>
-size_t OptimalCache<T, KeyT>::find_next_use_position(KeyT key) {
-    auto it = request_positions_.find(key);
-    if(it == request_positions_.end())
-        return std::numeric_limits<size_t>::max();
-
-    const auto &positions = it->second;
-    size_t pos_it = std::upper_bound(positions.begin(), positions.end(), current_pos_);
-
-    return pos_it;
-}
-
-template <typename T, typename KeyT>
-OptimalCache<T, KeyT>::ListIt OptimalCache<T, KeyT>::find_entry_to_evict() {
-    return std::max(cache_.begin(), cache_.end());
+typename OptimalCache<T, KeyT>::ListIt OptimalCache<T, KeyT>::find_entry_to_evict() {
+    return std::max_element(cache_.begin(), cache_.end());
 }
 
 template <typename T, typename KeyT>
 bool OptimalCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) {
-    if(future_accesses_[current_pos_] != key || current_pos_ >= future_accesses_.size())
+    if(current_pos_ >= future_accesses_.size() || future_accesses_[current_pos_] != key)
         throw std::runtime_error("Optimal cache: access sequence doesnt match known future");
-
+    
     auto it = hash_.find(key);
-    if(it != hash.end()) {
-        it->second->next_use = find_next_use_position(key);
+    size_t new_next_use = next_uses_[current_pos_];
+
+    if(it != hash_.end()) {
+        it->second->next_use = next_uses_[current_pos_];
         current_pos_++;
         return true;
     }
 
-    if(cache_.size == this->capacity_) {
+    current_pos_++;
+    if(cache_.size() == this->capacity_) {
         auto evict_it = find_entry_to_evict();
+        size_t max_next_use_in_cache = evict_it->next_use;
+
+        if(new_next_use >= max_next_use_in_cache)
+            return false;
+        
         hash_.erase(evict_it->key);
         cache_.erase(evict_it);
     }
 
     T value = slow_get_page(key);
-    size_t next_pos = find_next_use_position();
 
     CacheEntry newEntry {
         key,
         value,
-        next_pos
+        new_next_use
     };
 
     cache_.push_back(newEntry);
-    hash_[key] = cache_.back();
+    hash_[key] = std::prev(cache_.end());
 
-    current_pos_++;
     return false;
 }
 
@@ -108,7 +107,7 @@ OptimalCache<T, KeyT>::OptimalCache(size_t capacity, std::vector<KeyT> future_ac
 : ICache<T, KeyT>(capacity), future_accesses_(future_accesses) {
     if(future_accesses_.empty())
         throw std::invalid_argument("Future accesses sequence can not be empty for Optimal Cache");
-    build_accesses_positions();
+    precalculate_next_uses();
 }
 
 template <typename T, typename KeyT>
@@ -117,7 +116,7 @@ struct OptimalCache<T, KeyT>::CacheEntry {
     T value;
     size_t next_use;
 
-    bool operator < (const CacheEntry &other) {
+    bool operator < (const CacheEntry &other) const {
         return next_use < other.next_use;
     }
 };
