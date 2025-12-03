@@ -54,7 +54,14 @@ void OptimalCache<T, KeyT>::build_accesses_positions() {
 
 template <typename T, typename KeyT>
 size_t OptimalCache<T, KeyT>::find_next_use_position(KeyT key) {
+    auto it = request_positions_.find(key);
+    if(it == request_positions_.end())
+        return std::numeric_limits<size_t>::max();
 
+    const auto &positions = it->second;
+    size_t pos_it = std::upper_bound(positions.begin(), positions.end(), current_pos_);
+
+    return pos_it;
 }
 
 template <typename T, typename KeyT>
@@ -64,7 +71,36 @@ OptimalCache<T, KeyT>::ListIt OptimalCache<T, KeyT>::find_entry_to_evict() {
 
 template <typename T, typename KeyT>
 bool OptimalCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) {
+    if(future_accesses_[current_pos_] != key || current_pos_ >= future_accesses_.size())
+        throw std::runtime_error("Optimal cache: access sequence doesnt match known future");
 
+    auto it = hash_.find(key);
+    if(it != hash.end()) {
+        it->second->next_use = find_next_use_position(key);
+        current_pos_++;
+        return true;
+    }
+
+    if(cache_.size == this->capacity_) {
+        auto evict_it = find_entry_to_evict();
+        hash_.erase(evict_it->key);
+        cache_.erase(evict_it);
+    }
+
+    T value = slow_get_page(key);
+    size_t next_pos = find_next_use_position();
+
+    CacheEntry newEntry {
+        key,
+        value,
+        next_pos
+    };
+
+    cache_.push_back(newEntry);
+    hash_[key] = cache_.back();
+
+    current_pos_++;
+    return false;
 }
 
 template <typename T, typename KeyT>
