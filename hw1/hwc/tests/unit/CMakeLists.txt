@@ -1,8 +1,15 @@
 find_package(GTest REQUIRED)
 
-add_executable(test_lru_cache test_lru_cache.cpp)
+if(BUILD_LRU)
+    add_executable(test_lru_cache test_lru_cache.cpp)
+    target_include_directories(test_lru_cache PRIVATE ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(test_lru_cache cache_headers GTest::gtest GTest::gtest_main)
+    message(STATUS "Built LRU cache test: test_lru_cache")
+endif()
 
-target_include_directories(test_lru_cache PRIVATE  ${CMAKE_SOURCE_DIR}/include)
-
-target_link_libraries(test_lru_cache cache_headers GTest::gtest GTest::gtest_main)
-
+if(BUILD_OPTIMAL)
+    add_executable(test_opt_cache test_opt_cache.cpp)
+    target_include_directories(test_opt_cache PRIVATE ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(test_opt_cache cache_headers GTest::gtest GTest::gtest_main)
+    message(STATUS "Built Optimal cache test: test_opt_cache")
+endif()
