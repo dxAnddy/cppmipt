@@ -27,9 +27,16 @@ public:
 
     bool lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) override;
 
+    void set_future_accesses(std::vector<KeyT> future_accesses) {
+        clear();
+        future_accesses_ = future_accesses;
+        precalculate_next_uses();
+    }
+    
     void clear() override {
         cache_.clear();
         hash_.clear();
+        current_pos_ = 0;
     }
 
     size_t size() const noexcept override {
@@ -47,13 +54,14 @@ void OptimalCache<T, KeyT>::precalculate_next_uses() {
     for(size_t i = 0 ; i < next_uses_.size(); i++)
         next_uses_[i] = std::numeric_limits<size_t>::max();
 
-    for(size_t i = next_uses_.size() - 1; i > 0; --i) {
-        KeyT key = future_accesses_[i];
+    for(size_t i = next_uses_.size(); i >= 1; --i) {
+        size_t idx = i - 1;
+        KeyT key = future_accesses_[idx];
         auto it = next_position.find(key);
         if(it != next_position.end()) {
-            next_uses_[i] = it->second;
+            next_uses_[idx] = it->second;
         }
-        next_position[key] = i;
+        next_position[key] = idx;
     }
 }
 
