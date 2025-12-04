@@ -7,10 +7,8 @@
     #include "lru_cache.hpp"
 #elif defined(USE_OPTIMAL)
     #include "optimal_cache.hpp"
-#else
-#ifndef __INTELLISENSE__
-    #error "No cache type defined. Use -DUSE_LRU, -DUSE_OPTIMAL"
-#endif
+#elif defined(USE_ARC)
+    #include "arc_cache.hpp"
 #endif
 
 int main() {
@@ -26,6 +24,13 @@ int main() {
 
 #ifdef USE_LRU
     caches::LRUCache<int> cache{cache_size};
+#endif
+
+#ifdef USE_ARC
+    caches::ARCCache<int> cache{cache_size};
+#endif
+
+#if defined(USE_LRU) || defined(USE_ARC)
     for(size_t i = 0; i < num_elems; i++) {
         int elem;
         std::cin >> elem;
