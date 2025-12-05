@@ -22,6 +22,11 @@ target_compile_definitions(cache_opt PRIVATE USE_OPTIMAL)
 target_link_libraries(cache_opt cache_headers)
 message(STATUS "Build Optimal cache app: cache_opt")
 
+add_executable(cache_arc ${CMAKE_SOURCE_DIR}/src/main.cpp)
+target_compile_definitions(cache_arc PRIVATE USE_ARC)
+target_link_libraries(cache_arc cache_headers)
+message(STATUS "Build Arc cache app: cache_arc")
+
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
     message(STATUS "Building tests")

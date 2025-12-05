@@ -27,7 +27,7 @@ int main() {
 #endif
 
 #ifdef USE_ARC
-    caches::ARCCache<int> cache{cache_size};
+    caches::ArcCache<int> cache{cache_size};
 #endif
 
 #if defined(USE_LRU) || defined(USE_ARC)
