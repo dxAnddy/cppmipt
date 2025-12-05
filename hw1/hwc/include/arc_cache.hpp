@@ -72,28 +72,28 @@ void ArcCache<T, KeyT>::replace(KeyT key) {
 
 template <typename T, typename KeyT>
 size_t ArcCache<T, KeyT>::compute_delta(bool hit_in_b1) {
-    if (B1.empty() || B2.empty()) return 1;
     if(hit_in_b1) {
         if(B1.size() >= B2.size())
             return 1;
-        return std::max<size_t>(1, B2.size() / B1.size());
+        return  static_cast<double>(B2.size()) / B1.size();
     } else {
         if(B2.size() >= B1.size())
             return 1;
-        return std::max<size_t>(1, B1.size() / B2.size());
+        return static_cast<double>(B1.size()) / B2.size();
     }
 }
 
 template <typename T, typename KeyT>
 void ArcCache<T, KeyT>::adapt_parameter(bool hit_in_b1) {
-    size_t delta = compute_delta(hit_in_b1);
-    if(hit_in_b1)
-        p = std::min<size_t>(p + delta, this->capacity_);
-    else {
-        if(delta >= p) 
+    double delta = compute_delta(hit_in_b1);
+    if (hit_in_b1) {
+        p = std::min(static_cast<size_t>(p + delta), this->capacity_);
+    } else {
+        if (delta >= p) {
             p = 0;
-        else 
-            p -= delta;
+        } else {
+            p = static_cast<size_t>(p - delta);
+        }
     }
 }
 
@@ -152,7 +152,7 @@ bool ArcCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_
             T1_map.erase(last_it->first);
             T1.pop_back();
         }
-    } else {
+    } else if(T1.size() + B1.size() < this->capacity_) {
         size_t size = T1.size() + T2.size() + B1.size() + B2.size();
         if(size >= this->capacity_) {
             if(size == (this->capacity_) * 2) {
@@ -167,6 +167,7 @@ bool ArcCache<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_
     T1_map[key] = T1.begin();
 
     assert(T1.size() + T2.size() <= this->capacity_);
+    assert(T1.size() + B1.size() + B2.size() + T2.size() <= this->capacity_ * 2);
     return false;
 }
 
