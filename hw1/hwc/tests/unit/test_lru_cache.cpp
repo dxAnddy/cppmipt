@@ -3,8 +3,10 @@
 #include "lru_cache.hpp"
 #include "get_pages.hpp"
 
+using page_getters::slow_get_page_int;
+
 TEST(LRUCacheTest, BasicOperations) {
-    using page_getters::slow_get_page_int;
+
     caches::LRUCache<int> cache(2);
 
     EXPECT_FALSE(cache.lookup_update(1, slow_get_page_int));
@@ -23,7 +25,6 @@ TEST(LRUCacheTest, BasicOperations) {
 }
 
 TEST(LRUCacheTest, LRUPolicy) {
-    using page_getters::slow_get_page_int;
     caches::LRUCache<int> cache(3);
 
     EXPECT_FALSE(cache.lookup_update(1, slow_get_page_int));
@@ -36,7 +37,6 @@ TEST(LRUCacheTest, LRUPolicy) {
 }
 
 TEST(LRUCacheTest, Clear) {
-    using page_getters::slow_get_page_int;
     caches::LRUCache<int> cache(5);
     
     cache.lookup_update(1, slow_get_page_int);
