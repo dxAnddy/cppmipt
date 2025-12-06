@@ -136,7 +136,7 @@ def main():
     plt.tight_layout()
     
     output_file = "cache_size_comparison.png"
-    plt.savefig(output_file, dpi = 300)
+    plt.savefig(Path(__file__).resolve().parent / output_file, dpi = 300)
     print(f"\nГрафик сохранён как {output_file}")
     plt.show()
     
