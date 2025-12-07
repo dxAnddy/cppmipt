@@ -45,3 +45,6 @@
 
 #cmake
 build/
+
+#png graph
+cache_size_comparison.png
