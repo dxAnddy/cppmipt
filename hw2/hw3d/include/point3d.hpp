@@ -29,12 +29,12 @@ public:
         return vx && vy && vz;
     }
 
-    bool equal(const Point3D& other, T epsilon = std::numeric_limits<T>::epsilon * 100) const{
+    bool equal(const Point3D& other, T epsilon = std::numeric_limits<T>::epsilon() * 100) const{
         if(!valid() || !other.valid())
             return false;
         bool x_eps = std::abs(x - other.x) <= epsilon;
         bool y_eps = std::abs(y - other.y) <= epsilon;
-        bool z_eps = std::abs(z - other.y) <= epsilon;
+        bool z_eps = std::abs(z - other.z) <= epsilon;
         return x_eps && y_eps && z_eps;
     }
 
