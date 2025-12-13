@@ -5,17 +5,17 @@ using geometry::Point3D;
 
 TEST(Point3DTest, DefaultConstructor) {
     Point3D<float> p;
-    EXPECT_NEAR(p.x, 0.0f, 0.0001);
-    EXPECT_NEAR(p.y, 0.0f, 0.0001);
-    EXPECT_NEAR(p.z, 0.0f, 0.0001);
+    EXPECT_NEAR(p.x(), 0.0f, 0.0001);
+    EXPECT_NEAR(p.y(), 0.0f, 0.0001);
+    EXPECT_NEAR(p.z(), 0.0f, 0.0001);
     EXPECT_TRUE(p.valid());
 }
 
 TEST(Point3DTest, ParameterizedConstructor) {
     Point3D<double> p(1.5, 2.5, 3.5);
-    EXPECT_NEAR(p.x, 1.5f, 0.0001);
-    EXPECT_NEAR(p.y, 2.5f, 0.0001);
-    EXPECT_NEAR(p.z, 3.5f, 0.0001);
+    EXPECT_NEAR(p.x(), 1.5f, 0.0001);
+    EXPECT_NEAR(p.y(), 2.5f, 0.0001);
+    EXPECT_NEAR(p.z(), 3.5f, 0.0001);
     EXPECT_TRUE(p.valid());
 }
 
@@ -62,7 +62,7 @@ TEST(Point3DTest, TypeConversion) {
     Point3D<double> p_double(1.5, 2.5, 3.5);
     Point3D<float> p_float(p_double);
     
-    EXPECT_NEAR(p_float.x, 1.5f, 0.0001f);
-    EXPECT_NEAR(p_float.y, 2.5f, 0.0001f);
-    EXPECT_NEAR(p_float.z, 3.5f, 0.0001f);
+    EXPECT_NEAR(p_float.x(), 1.5f, 0.0001f);
+    EXPECT_NEAR(p_float.y(), 2.5f, 0.0001f);
+    EXPECT_NEAR(p_float.z(), 3.5f, 0.0001f);
 }

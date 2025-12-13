@@ -3,6 +3,6 @@
 
 int main() {
     geometry::Point3D<double> d {1,2,3};
-    std::cout<< d.x<< " "<<d.valid()<<std::endl;
+    std::cout<< d.x()<< " "<<d.valid()<<std::endl;
     std::cout<<d<<std::endl;
 }
