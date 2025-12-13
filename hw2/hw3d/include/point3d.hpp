@@ -16,7 +16,7 @@ public:
     }
 
     template <typename U>
-    explicit Point3D(Point3D<U> &other) : 
+    explicit Point3D(const Point3D<U> &other) : 
         x(static_cast<T>(other.x)),
         y(static_cast<T>(other.y)),
         z(static_cast<T>(other.z)) {
@@ -32,10 +32,20 @@ public:
     bool equal(const Point3D& other, T epsilon = std::numeric_limits<T>::epsilon() * 100) const{
         if(!valid() || !other.valid())
             return false;
-        bool x_eps = std::abs(x - other.x) <= epsilon;
-        bool y_eps = std::abs(y - other.y) <= epsilon;
-        bool z_eps = std::abs(z - other.z) <= epsilon;
-        return x_eps && y_eps && z_eps;
+        auto nearly_equal =[epsilon](T a, T b) -> bool {
+            if(a == b) return true;
+
+            T diff = std::abs(a - b);
+            T max = std::max(a, b);
+            if(max > 1)
+                return diff <= epsilon * max;
+            else
+                return diff <= epsilon;
+        };
+        bool x_ne = nearly_equal(x, other.x);
+        bool y_ne = nearly_equal(y, other.y);
+        bool z_ne = nearly_equal(z, other.z);
+        return x_ne && y_ne && z_ne;
     }
 
     bool operator==(const Point3D& other) const {

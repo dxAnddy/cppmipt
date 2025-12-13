@@ -50,8 +50,8 @@ TEST(Point3DTest, EqualityWithEpsilon) {
 }
 
 TEST(Point3DTest, DistanceCalculation) {
-    Point3D<float> p1(0.0f, 0.0f, 0.0f);
-    Point3D<float> p2(3.0f, 4.0f, 0.0f);
+    Point3D<float> p1(0.0f, 5.0f, 0.0f);
+    Point3D<float> p2(3.0f, 5.0f, 4.0f);
     
     float expected = 5.0f;
     float actual = p1.distance_to(p2);
