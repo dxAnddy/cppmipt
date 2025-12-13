@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <limits>
 #include <cmath>
+#include <ostream>
 
 namespace geometry {
 
@@ -23,10 +24,7 @@ public:
     }
 
     bool valid() const {
-        bool vx = !std::isnan(x) && !std::isinf(x);
-        bool vy = !std::isnan(y) && !std::isinf(y);
-        bool vz = !std::isnan(z) && !std::isinf(z);
-        return vx && vy && vz;
+        return std::isfinite(x) && std::isfinite(y) && std::isfinite(z);
     }
 
     bool equal(const Point3D& other, T epsilon = std::numeric_limits<T>::epsilon() * 100) const{
@@ -36,11 +34,8 @@ public:
             if(a == b) return true;
 
             T diff = std::abs(a - b);
-            T max = std::max(a, b);
-            if(max > 1)
-                return diff <= epsilon * max;
-            else
-                return diff <= epsilon;
+            T max_ab = std::max(std::abs(a), std::abs(b));
+            return diff <= epsilon * std::max(max_ab, T(1));
         };
         bool x_ne = nearly_equal(x, other.x);
         bool y_ne = nearly_equal(y, other.y);
@@ -60,9 +55,12 @@ public:
         T dx = x - other.x;
         T dy = y - other.y;
         T dz = z - other.z;
-        return std::sqrt(dx * dx + dy * dy + dz * dz);
+        return std::hypot(dx, dy, dz);
     }
 
+    friend std::ostream& operator<<(std::ostream &os, const Point3D &p) {
+        return os << "(" << p.x << ", " << p.y << ", " << p.z << ")";
+    }
 };
 
 }
