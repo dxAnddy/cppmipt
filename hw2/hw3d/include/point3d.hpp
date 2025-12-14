@@ -1,13 +1,11 @@
 #pragma once
 
-#include <type_traits>
-#include <limits>
-#include <cmath>
-#include <ostream>
-
 #include "base3d.hpp"
 
 namespace geometry {
+
+template <typename>
+class Vector3D;
 
 template <typename T>
 class Point3D : public Base3D<T>{
@@ -29,6 +27,9 @@ public:
         return std::hypot(dx, dy, dz);
     }
 
+    Vector3D<T> operator-(const Point3D &other) const;
+    Point3D<T> operator+(const Vector3D<T> &other) const;
+    Point3D<T> operator-(const Vector3D<T> &other) const;
 };
 
 }
