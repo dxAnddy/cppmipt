@@ -1,6 +1,4 @@
-#include "vector3d.hpp"
-#include "point3d.hpp"
-#include "geometry_ops.hpp"
+#include "triangle3d.hpp"
 #include <iostream>
 
 int main() {
