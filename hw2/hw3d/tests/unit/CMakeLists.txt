@@ -8,3 +8,4 @@ function(add_geometry_test NAME SOURCE_FILE)
 endfunction()
 
 add_geometry_test(test_point3d test_point3d.cpp)
+add_geometry_test(test_vector3d test_vector3d.cpp)
