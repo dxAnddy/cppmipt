@@ -2,7 +2,10 @@
 
 #include "geometry_ops.hpp"
 
+#include <optional>
 #include <array>
+#include <utility>
+#include <cstddef>
 
 namespace geometry {
 
@@ -18,6 +21,8 @@ class Triangle3D {
         "Triangle 3D requires floating type");
 private:
     std::array<Point3D<T>, 3> vertices_;
+    using Segment = std::pair<Point3D<T>, Point3D<T>>;
+    using OptionalSegment = std::optional<Segment>;
 
 public:
     Triangle3D() = default;
@@ -30,6 +35,18 @@ public:
     const std::array<Point3D<T>, 3>& vertices() const { return vertices_; }
     std::array<Point3D<T>, 3>& vertices() { return vertices_; }
 
+    bool intersects(const Triangle3D &other) const {
+        OptionalSegment ops;
+        return intersects_detail(other, ops, IntersectionMode::WithoutSegment);
+    }
+
+private:
+    bool intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const;
 };
+
+template <typename T>
+bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const{
+    
+}
 
 }

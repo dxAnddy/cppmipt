@@ -7,4 +7,5 @@ int main() {
     geometry::Point3D<double> d = d1 + d2;
     std::cout<< d.x()<< " "<<d.valid()<<std::endl;
     std::cout<<d<<std::endl;
+    geometry::Triangle3D<double> tr;
 }
