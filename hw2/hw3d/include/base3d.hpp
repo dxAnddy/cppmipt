@@ -42,7 +42,7 @@ public:
     void set_y(T val) noexcept {y_ = val;}
     void set_z(T val) noexcept {z_ = val;}
 
-    bool equal(const Base3D &other, T epsilon = std::numeric_limits<T>::epsilon() * 100) {
+    bool equal(const Base3D &other, T epsilon = std::numeric_limits<T>::epsilon() * 100) const {
         if(!valid() && !other.valid())
             return false;
         
@@ -59,11 +59,11 @@ public:
         return x_ne && y_ne && z_ne;
     }
 
-    bool operator==(const Base3D &other) {
+    bool operator==(const Base3D &other) const {
         return equal(other);
     }
 
-    bool operator!=(const Base3D &other) {
+    bool operator!=(const Base3D &other) const{
         return !equal(other);
     }
 

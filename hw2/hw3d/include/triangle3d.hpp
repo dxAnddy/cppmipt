@@ -35,6 +35,17 @@ public:
     const std::array<Point3D<T>, 3>& vertices() const { return vertices_; }
     std::array<Point3D<T>, 3>& vertices() { return vertices_; }
 
+    Vector3D<T> normal() const {
+        Vector3D<T> vec01 = {vertices_[1] - vertices_[0]};
+        Vector3D<T> vec02 = {vertices_[2] - vertices_[0]};
+        return vec01.cross(vec02);
+    }
+
+    bool is_degenerate(T eps = T(1e-12)) const {
+        Vector3D<T> n = normal();
+        return n.length() < eps;
+    }
+
     bool intersects(const Triangle3D &other) const {
         OptionalSegment ops;
         return intersects_detail(other, ops, IntersectionMode::WithoutSegment);
@@ -46,7 +57,12 @@ private:
 
 template <typename T>
 bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const{
+    const Triangle3D<T>& T0 = *this;
+    const Triangle3D<T> &T1 = other;
     
+    if(T0.is_degenerate() || T1.is_degenerate())
+        return false;
+        
 }
 
 }
