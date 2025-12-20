@@ -1,6 +1,7 @@
 #pragma once
 
 #include "geometry_ops.hpp"
+#include "plane3d.hpp"
 
 #include <optional>
 #include <array>
@@ -51,6 +52,10 @@ public:
         return intersects_detail(other, ops, IntersectionMode::WithoutSegment);
     }
 
+    Plane3D<T> plane() const {
+        return Plane3D<T>::from_points(vertices_[0], vertices_[1], vertices_[2]);
+    }
+
 private:
     bool intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const;
 };
@@ -62,7 +67,9 @@ bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &
     
     if(T0.is_degenerate() || T1.is_degenerate())
         return false;
-        
+    
+    Plane3D<T> P0 = T0.plane();
+    
 }
 
 }
