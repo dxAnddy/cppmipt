@@ -62,3 +62,19 @@ TEST(Triangle3D, NearlyDegenerateTriangle) {
 
     EXPECT_TRUE(t.is_degenerate(1e-12));
 }
+
+TEST(Triangle3D_Intersects, NoDifferentSigns_AllAbovePlane) {
+    Triangle3D<double> T0(
+        {0, 0, 0},
+        {1, 0, 0},
+        {0, 1, 0}
+    );
+
+    Triangle3D<double> T1(
+        {0.2, 0.2, -1},
+        {0.8, 0.2, -1},
+        {0.2, 0.8, -1}
+    );
+
+    EXPECT_FALSE(T0.intersects(T1));
+}

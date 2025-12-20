@@ -37,8 +37,8 @@ public:
     std::array<Point3D<T>, 3>& vertices() { return vertices_; }
 
     Vector3D<T> normal() const {
-        Vector3D<T> vec01 = {vertices_[1] - vertices_[0]};
-        Vector3D<T> vec02 = {vertices_[2] - vertices_[0]};
+        Vector3D<T> vec01 = vertices_[1] - vertices_[0];
+        Vector3D<T> vec02 = vertices_[2] - vertices_[0];
         return vec01.cross(vec02);
     }
 
@@ -47,9 +47,9 @@ public:
         return n.length() < eps;
     }
 
-    bool intersects(const Triangle3D &other) const {
+    bool intersects(const Triangle3D &other,  T eps = T(1e-12)) const {
         OptionalSegment ops;
-        return intersects_detail(other, ops, IntersectionMode::WithoutSegment);
+        return intersects_detail(other, ops, IntersectionMode::WithoutSegment, eps);
     }
 
     Plane3D<T> plane() const {
@@ -57,19 +57,47 @@ public:
     }
 
 private:
-    bool intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const;
+    bool intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im, T eps) const;
+
+    std::array<T, 3> compute_sdists(const Plane3D<T> &P0, const Triangle3D<T> &T1) const {
+        std::array<T, 3> signed_dists;
+        for(int i = 0; i < 3; i++)
+            signed_dists[i] = P0.distance_to(T1[i]);
+        return signed_dists;
+    }
+
+    bool has_different_signs(const Plane3D<T> &P0, const Triangle3D<T> &T1, T eps) const {
+        std::array<T, 3> signed_dists = compute_sdists(P0, T1);
+        bool has_positive = false, has_negative = false;
+
+        for(T d : signed_dists) {
+            if(d > eps)
+                has_positive = true;
+            else if (d < -eps)
+                has_negative = true;
+            else
+                return true;
+        }
+        return has_negative && has_positive;
+    }
 };
 
 template <typename T>
-bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im) const{
+bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im, T eps) const{
     const Triangle3D<T>& T0 = *this;
     const Triangle3D<T> &T1 = other;
     
-    if(T0.is_degenerate() || T1.is_degenerate())
+    if(T0.is_degenerate(eps) || T1.is_degenerate(eps))
         return false;
     
     Plane3D<T> P0 = T0.plane();
-    
+
+    if(!has_different_signs(P0, T1, eps))
+        return false;
+
+    Plane3D<T> P1 = T1.plane();
+
+    return true;
 }
 
 }

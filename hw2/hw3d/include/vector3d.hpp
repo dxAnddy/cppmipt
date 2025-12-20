@@ -60,12 +60,12 @@ public:
         return *this;
     }
     
-    T angle_to(const Vector3D& other) const {
+    T angle_to(const Vector3D& other, T epsilon = T(1e-12)) const {
         T len1 = length();
         T len2 = other.length();
         
-        if (len1 < std::numeric_limits<T>::epsilon() || 
-            len2 < std::numeric_limits<T>::epsilon()) {
+        if (len1 < epsilon || 
+            len2 < epsilon) {
             return 0;
         }
         
@@ -120,7 +120,8 @@ public:
     }
     
     Vector3D& operator/=(T scalar) {
-        if (std::abs(scalar) < std::numeric_limits<T>::epsilon()) {
+        T epsilon = T(1e-12);
+        if (std::abs(scalar) < epsilon) {
             throw std::runtime_error("Vector3D division by zero");
         }
         T inv_scalar = 1.0 / scalar;

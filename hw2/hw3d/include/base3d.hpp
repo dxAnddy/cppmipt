@@ -42,7 +42,7 @@ public:
     void set_y(T val) noexcept {y_ = val;}
     void set_z(T val) noexcept {z_ = val;}
 
-    bool equal(const Base3D &other, T epsilon = std::numeric_limits<T>::epsilon() * 100) const {
+    bool equal(const Base3D &other, T epsilon = T(1e-12)) const {
         if(!valid() && !other.valid())
             return false;
         
