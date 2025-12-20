@@ -58,6 +58,8 @@ public:
 
 private:
     bool intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im, T eps) const;
+    bool intersect_coplanar_triangles(const Triangle3D<T>& T0, const Triangle3D<T>& T1, 
+        OptionalSegment &ops,  IntersectionMode im) const; 
 
     std::array<T, 3> compute_sdists(const Plane3D<T> &P0, const Triangle3D<T> &T1) const {
         std::array<T, 3> signed_dists;
@@ -84,7 +86,7 @@ private:
 
 template <typename T>
 bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &ops, IntersectionMode im, T eps) const{
-    const Triangle3D<T>& T0 = *this;
+    const Triangle3D<T> &T0 = *this;
     const Triangle3D<T> &T1 = other;
     
     if(T0.is_degenerate(eps) || T1.is_degenerate(eps))
@@ -97,7 +99,21 @@ bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &
 
     Plane3D<T> P1 = T1.plane();
 
+    if(P0.is_parallel(P1)) {
+        T d_diff = std::abs(P0.d() - P1.d());
+        if(d_diff < eps)
+            return intersect_coplanar_triangles(T0, T1, ops, im);
+        else
+            return false;
+    }
+
     return true;
+}
+
+template <typename T>
+bool Triangle3D<T>::intersect_coplanar_triangles(const Triangle3D<T>& T0, const Triangle3D<T>& T1, 
+        OptionalSegment &ops,  IntersectionMode im) const {
+
 }
 
 }

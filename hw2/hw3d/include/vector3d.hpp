@@ -17,13 +17,21 @@ private:
     using Base::x_;
     using Base::y_;
     using Base::z_;
+    inline static T epsilon_ = T(1e-12);
     
 public:
     Vector3D(T x = 0, T y = 0, T z = 0) noexcept : Base {x, y, z} {}
     
     Vector3D(const Point3D<T>& from, const Point3D<T>& to);
     
-    
+    static void set_epsilon(T eps) {
+        if (eps <= T(0))
+            throw std::invalid_argument("epsilon must be positive");
+        epsilon_ = eps;
+    }
+
+    static T get_epsilon() { return epsilon_; }
+
     T length() const noexcept {
         return std::hypot(x_, y_, z_);
     }
@@ -40,18 +48,18 @@ public:
         };
     }
     
-    Vector3D normalized() const {
+    Vector3D normalized(T eps = epsilon_) const {
         T len = length();
-        if (len < std::numeric_limits<T>::epsilon()) {
+        if (len < eps) {
             return Vector3D {0, 0, 0};
         }
         T inv_len = 1.0 / len;
         return Vector3D {x_ * inv_len, y_ * inv_len, z_ * inv_len};
     }
     
-    Vector3D& normalize() {
+    Vector3D& normalize(T eps = epsilon_) {
         T len = length();
-        if (len > std::numeric_limits<T>::epsilon()) {
+        if (len > eps) {
             T inv_len = 1.0 / len;
             x_ *= inv_len;
             y_ *= inv_len;
@@ -60,12 +68,12 @@ public:
         return *this;
     }
     
-    T angle_to(const Vector3D& other, T epsilon = T(1e-12)) const {
+    T angle_to(const Vector3D& other, T eps = epsilon_ ) const {
         T len1 = length();
         T len2 = other.length();
         
-        if (len1 < epsilon || 
-            len2 < epsilon) {
+        if (len1 < eps || 
+            len2 < eps) {
             return 0;
         }
         
@@ -87,7 +95,7 @@ public:
     }
     
     Vector3D operator/(T scalar) const {
-        if (std::abs(scalar) < std::numeric_limits<T>::epsilon()) {
+        if (std::abs(scalar) < epsilon_) {
             throw std::runtime_error("Vector3D division by zero");
         }
         T inv_scalar = 1.0 / scalar;
@@ -120,8 +128,7 @@ public:
     }
     
     Vector3D& operator/=(T scalar) {
-        T epsilon = T(1e-12);
-        if (std::abs(scalar) < epsilon) {
+        if (std::abs(scalar) < epsilon_) {
             throw std::runtime_error("Vector3D division by zero");
         }
         T inv_scalar = 1.0 / scalar;

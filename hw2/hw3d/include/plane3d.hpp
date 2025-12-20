@@ -28,6 +28,17 @@ public:
         return normal_.dot(point - Point3D<T>{}) + d_;
     }
 
+    bool is_coincident(const Plane3D &other, T eps = T(1e-12)) {
+        if(is_parallel(other, eps))
+            if(std::abs(d_ - other.d_) < eps)
+                return true;
+        return false;
+    }
+
+    bool is_parallel(const Plane3D &other, T eps = T(1e-12)) {
+        return std::abs(normal_.dot(other.normal_)) < eps;
+    }
+
     T d() const {return d_; }
     Vector3D<T> normal() const {return normal_; }
 };
