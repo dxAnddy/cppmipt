@@ -82,6 +82,18 @@ private:
         }
         return has_negative && has_positive;
     }
+
+    T select_axis() const {
+        Vector3D<T> n = normal();
+        int max_axis = 0;
+        T max_val = std::abs(n.x());
+        if(std::abs(n.y()) > max_val)
+            max_axis = 1;
+        if(std::abs(n.z()) > max_val)
+            max_axis = 2;
+        return max_axis;
+    }
+
 };
 
 template <typename T>
@@ -112,8 +124,9 @@ bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &
 
 template <typename T>
 bool Triangle3D<T>::intersect_coplanar_triangles(const Triangle3D<T>& T0, const Triangle3D<T>& T1, 
-        OptionalSegment &ops,  IntersectionMode im) const {
+    OptionalSegment &ops,  IntersectionMode im) const {
 
+    T max_axis = select_axis();
 }
 
 }

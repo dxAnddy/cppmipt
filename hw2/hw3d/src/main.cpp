@@ -8,4 +8,4 @@ int main() {
     std::cout<< d.x()<< " "<<d.valid()<<std::endl;
     std::cout<<d<<std::endl;
     geometry::Triangle3D<double> tr;
-}
+}//578 302

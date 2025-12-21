@@ -2,7 +2,6 @@
 
 #include <type_traits>
 #include <cmath>
-#include <limits>
 #include <ostream>
 
 namespace geometry {
