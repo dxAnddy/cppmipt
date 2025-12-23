@@ -20,7 +20,8 @@ private:
     inline static T epsilon_ = T(1e-12);
     
 public:
-    Vector3D(T x = 0, T y = 0, T z = 0) noexcept : Base {x, y, z} {}
+    Vector3D(T x = 0, T y = 0, T z = 0) noexcept : 
+    Base (x, y, z) {}
     
     Vector3D(const Point3D<T>& from, const Point3D<T>& to);
     

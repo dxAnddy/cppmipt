@@ -6,12 +6,12 @@
 namespace geometry {
 
 template <typename T>
-class Base2d {
+class Base2D {
     static_assert(std::is_floating_point<T>::value, "Base 2d requires floating point type");
 protected:
     T x_, y_;
 
-    Base2d(T x = 0, T y = 0) noexcept : x_(x), y_(y) t{
+    Base2D(T x = 0, T y = 0) noexcept : x_(x), y_(y) {
 
     }
     
@@ -23,7 +23,7 @@ protected:
 public:
 
     template <typename U>
-    explicit Base2d(const Base2d<U> &other) :
+    explicit Base2D(const Base2D<U> &other) :
     x_(static_cast<T>(other.x())),
     y_(static_cast<T>(other.y())) {
     }
@@ -38,7 +38,7 @@ public:
     void set_x(T val) noexcept { x_ = val; }
     void set_y(T val) noexcept { y_ = val; }
 
-    bool equal(const Base2d<T> &other, T epsilon = T(1e-12)) const {
+    bool equal(const Base2D<T> &other, T epsilon = T(1e-12)) const {
         if(!valid() && !other.valid())
             return false;
 
@@ -48,11 +48,11 @@ public:
         return x_ne && y_ne;
     }
 
-    bool operator==(const Base2d<T> &other) {
+    bool operator==(const Base2D &other) {
         return equal(other);
     }
 
-    bool operator!=() {
+    bool operator!=(const Base2D &other) {
         return !equal(other);
     }
 
