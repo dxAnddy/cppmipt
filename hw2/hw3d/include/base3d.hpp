@@ -1,5 +1,6 @@
 #pragma once
 
+#include "detail/fp_utils.hpp"
 #include <type_traits>
 #include <cmath>
 #include <ostream>
@@ -44,17 +45,11 @@ public:
     bool equal(const Base3D &other, T epsilon = T(1e-12)) const {
         if(!valid() && !other.valid())
             return false;
-        
-        auto nearly_equal = [epsilon](T a, T b) -> bool {
-            if(a == b) return true;
-            T diff = std::abs(a - b);
-            T max_ab = std::max(a, b);
-            return diff <= epsilon * std::max(max_ab, T(1));
-        };
 
-        bool x_ne = nearly_equal(x_, other.x_);
-        bool y_ne = nearly_equal(y_, other.y_);
-        bool z_ne = nearly_equal(z_, other.z_);
+        using detail::nearly_equal;
+        bool x_ne = nearly_equal(x_, other.x_, epsilon);
+        bool y_ne = nearly_equal(y_, other.y_, epsilon);
+        bool z_ne = nearly_equal(z_, other.z_, epsilon);
         return x_ne && y_ne && z_ne;
     }
 

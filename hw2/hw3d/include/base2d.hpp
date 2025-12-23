@@ -1,7 +1,7 @@
 #pragma once
 
+#include "detail/fp_utils.hpp"
 #include <type_traits>
-#include <cmath>
 
 namespace geometry {
 
@@ -42,8 +42,9 @@ public:
         if(!valid() && !other.valid())
             return false;
 
-        bool x_ne = nearly_equal(x, other.x_);
-        bool y_ne = nearly_equal(y, other.y_);
+        using detail::nearly_equal;
+        bool x_ne = nearly_equal(x_, other.x_, epsilon);
+        bool y_ne = nearly_equal(y_, other.y_, epsilon);
         
         return x_ne && y_ne;
     }
@@ -56,6 +57,7 @@ public:
         return !equal(other);
     }
 
+    ~Base2D() = default;
 };
 
 }
