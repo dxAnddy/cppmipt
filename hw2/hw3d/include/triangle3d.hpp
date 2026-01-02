@@ -34,8 +34,8 @@ public:
     Point3D<T>& operator[](size_t i) {return vertices_[i]; }
     const Point3D<T>& operator[](size_t i) const {return vertices_[i]; }
 
-    const std::array<Point3D<T>, 3>& vertices() const { return vertices_; }
     std::array<Point3D<T>, 3>& vertices() { return vertices_; }
+    const std::array<Point3D<T>, 3>& vertices() const { return vertices_; }
 
     Vector3D<T> normal() const {
         Vector3D<T> vec01 = vertices_[1] - vertices_[0];

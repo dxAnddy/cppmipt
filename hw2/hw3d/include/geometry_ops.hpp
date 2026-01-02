@@ -24,7 +24,7 @@ namespace geometry {
 
     template<typename T>
     Vector2D<T>::Vector2D(const Point2D<T> &pt1, const Point2D<T> &pt2) : 
-    Base3D<T> (pt2.x() - pt1.x(), pt2.y() - pt1.y()) {
+        Base2D<T> (pt2.x() - pt1.x(), pt2.y() - pt1.y()) {
     }
 
     template <typename T>
@@ -44,7 +44,7 @@ namespace geometry {
 
     template<typename T>
     Vector3D<T>::Vector3D(const Point3D<T> &pt1, const Point3D<T> &pt2) : 
-    Base3D<T> (pt2.x() - pt1.x(), pt2.y() - pt1.y(), pt2.z() - pt1.z()) {
+        Base3D<T> (pt2.x() - pt1.x(), pt2.y() - pt1.y(), pt2.z() - pt1.z()) {
     }
 
 }
