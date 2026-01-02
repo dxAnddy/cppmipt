@@ -7,6 +7,7 @@
 #include <array>
 #include <utility>
 #include <cstddef>
+#include <type_traits>
 
 namespace geometry {
 

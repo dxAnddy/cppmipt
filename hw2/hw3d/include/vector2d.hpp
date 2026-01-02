@@ -2,7 +2,7 @@
 #include <type_traits>
 
 #include "base2d.hpp"
-
+#include <type_traits>
 
 namespace geometry {
 
@@ -22,6 +22,8 @@ private:
 public:
     Vector2D(T x, T y) noexcept :
     Base (x, y) {}
+
+    Vector2D(const Point2D<T> &from, const Point2D<T> &to);
 
 };
 

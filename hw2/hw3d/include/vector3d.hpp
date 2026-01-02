@@ -1,7 +1,8 @@
 #pragma once
 #include <type_traits>
-
 #include "base3d.hpp"
+
+#include "detail/epsilon.hpp"
 
 namespace geometry {
 
@@ -17,21 +18,12 @@ private:
     using Base::x_;
     using Base::y_;
     using Base::z_;
-    inline static T epsilon_ = T(1e-12);
     
 public:
     Vector3D(T x = 0, T y = 0, T z = 0) noexcept : 
     Base (x, y, z) {}
     
     Vector3D(const Point3D<T>& from, const Point3D<T>& to);
-    
-    static void set_epsilon(T eps) {
-        if (eps <= T(0))
-            throw std::invalid_argument("epsilon must be positive");
-        epsilon_ = eps;
-    }
-
-    static T get_epsilon() { return epsilon_; }
 
     T length() const noexcept {
         return std::hypot(x_, y_, z_);
@@ -49,7 +41,7 @@ public:
         };
     }
     
-    Vector3D normalized(T eps = epsilon_) const {
+    Vector3D normalized(T eps = Epsilon<T>::epsilon_value()) const {
         T len = length();
         if (len < eps) {
             return Vector3D {0, 0, 0};
@@ -58,7 +50,7 @@ public:
         return Vector3D {x_ * inv_len, y_ * inv_len, z_ * inv_len};
     }
     
-    Vector3D& normalize(T eps = epsilon_) {
+    Vector3D& normalize(T eps = Epsilon<T>::epsilon_value()) {
         T len = length();
         if (len > eps) {
             T inv_len = 1.0 / len;
@@ -69,7 +61,7 @@ public:
         return *this;
     }
     
-    T angle_to(const Vector3D& other, T eps = epsilon_ ) const {
+    T angle_to(const Vector3D& other, T eps = Epsilon<T>::epsilon_value() ) const {
         T len1 = length();
         T len2 = other.length();
         
@@ -96,7 +88,7 @@ public:
     }
     
     Vector3D operator/(T scalar) const {
-        if (std::abs(scalar) < epsilon_) {
+        if (std::abs(scalar) < Epsilon<T>::epsilon_value()) {
             throw std::runtime_error("Vector3D division by zero");
         }
         T inv_scalar = 1.0 / scalar;
@@ -129,7 +121,7 @@ public:
     }
     
     Vector3D& operator/=(T scalar) {
-        if (std::abs(scalar) < epsilon_) {
+        if (std::abs(scalar) < Epsilon<T>::epsilon_value()) {
             throw std::runtime_error("Vector3D division by zero");
         }
         T inv_scalar = 1.0 / scalar;
