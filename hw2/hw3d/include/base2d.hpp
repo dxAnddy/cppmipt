@@ -1,7 +1,10 @@
 #pragma once
 
-#include "detail/fp_utils.hpp"
 #include <type_traits>
+#include <cmath>
+#include <ostream>
+
+#include "detail/fp_utils.hpp"
 
 namespace geometry {
 
@@ -57,7 +60,11 @@ public:
         return !equal(other);
     }
 
-    ~Base2D() = default;
+    friend std::ostream& operator<<(std::ostream &os, const Base2D &v) {
+        return os << "(" << v.x_ << ", " << v.y_ << ")";
+    }
+
+    virtual ~Base2D() = default;
 };
 
 }

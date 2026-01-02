@@ -1,7 +1,7 @@
 #pragma once
 #include <type_traits>
-#include "base3d.hpp"
 
+#include "base3d.hpp"
 #include "detail/epsilon.hpp"
 
 namespace geometry {
@@ -61,14 +61,12 @@ public:
         return *this;
     }
     
-    T angle_to(const Vector3D& other, T eps = Epsilon<T>::epsilon_value() ) const {
+    T angle_to(const Vector3D& other, T eps = Epsilon<T>::epsilon_value()) const {
         T len1 = length();
         T len2 = other.length();
         
-        if (len1 < eps || 
-            len2 < eps) {
+        if (len1 < eps || len2 < eps)
             return 0;
-        }
         
         T cos_angle = dot(other) / (len1 * len2);
         
@@ -81,10 +79,6 @@ public:
     
     Vector3D operator-(const Vector3D& other) const noexcept {
         return Vector3D {x_ - other.x_, y_ - other.y_, z_ - other.z_};
-    }
-    
-    Vector3D operator*(T scalar) const noexcept {
-        return Vector3D {x_ * scalar, y_ * scalar, z_ * scalar};
     }
     
     Vector3D operator/(T scalar) const {
@@ -136,5 +130,19 @@ public:
     static Vector3D unit_y() noexcept { return Vector3D {0, 1, 0}; }
     static Vector3D unit_z() noexcept { return Vector3D {0, 0, 1}; }
 };
+
+template <typename T>
+Vector3D<T> operator*(Vector3D<T> &vec, T scalar) noexcept {
+    return Vector3D<T> {
+        vec.x() * scalar,
+        vec.y() * scalar,
+        vec.z() * scalar
+    };
+}
+
+template <typename T>
+Vector3D<T> operator*(T scalar, Vector3D<T> vec) noexcept {
+    return vec * scalar;
+}
 
 } 
