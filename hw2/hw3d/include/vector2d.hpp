@@ -64,6 +64,70 @@ public:
         return std::acos(cos_angle);
     }
 
+    Vector2D operator+(const Vector2D &other) const noexcept {
+        return Vector2D {x_ + other.x_, y_ + other.y_};
+    }
+
+    Vector2D operator-(const Vector2D &other) const noexcept {
+        return Vector2D {x_ - other.x, y_ - other.y};
+    }
+
+    Vector2D operator/(T scalar) const {
+        if(std::abs(scalar) < Epsilon<T>::epsilon_value())
+            throw std::runtime_error("Vector2D division by zero");
+
+        T inv_scalar = 1.0 / scalar;    
+        return Vector2D {x_ * inv_scalar, y_ * inv_scalar};
+    }
+
+    Vector2D operator-() {
+        return Vector2D {-x_, -y_};
+    }
+
+    Vector2D &operator+=(const Vector2D &other) noexcept {
+        x_ += other.x_;
+        y_ += other.y_;
+        return *this; 
+    }
+
+    Vector2D &operator-=(const Vector2D &other) noexcept {
+        x_ -= other.x_;
+        y_ -= other.y_;
+        return *this; 
+    }
+
+    Vector2D &operator*=(T scalar) noexcept {
+        x_ *= scalar;
+        y_ *= scalar;
+        return *this;
+    }
+
+    Vector2D& operator/=(T scalar) {
+        if (std::abs(scalar) < Epsilon<T>::epsilon_value()) {
+            throw std::runtime_error("Vector2D division by zero");
+        }
+        T inv_scalar = 1.0 / scalar;
+        x_ *= inv_scalar;
+        y_ *= inv_scalar;
+        return *this;
+    }
+
+    static Vector2D zero() noexcept { return Vector2D {0, 0}; }
+    static Vector2D unit_x() noexcept { return Vector2D {1, 0}; }
+    static Vector2D unit_y() noexcept { return Vector2D {0, 1}; }
 };
+
+template <typename T>
+Vector2D<T> operator*(Vector2D<T> &vec, T scalar) {
+    return Vector2D<T> {
+        vec.x() * scalar,
+        vec.y() * scalar
+    };
+}
+
+template <typename T>
+Vector2D<T> operator*(T scalar, Vector2D<T> &vec) {
+    return vec * scalar;
+}
 
 }

@@ -22,6 +22,11 @@ namespace geometry {
         return Point2D<T> {this->x_ - other.x(), this->x_ - other.y()};
     }
 
+    template<typename T>
+    Vector2D<T>::Vector2D(const Point2D<T> &pt1, const Point2D<T> &pt2) : 
+    Base3D<T> (pt2.x() - pt1.x(), pt2.y() - pt1.y()) {
+    }
+
     template <typename T>
     Vector3D<T> Point3D<T>::operator-(const Point3D &other) const {
         return Vector3D<T> {other.x_ - this->x_, other.y_ - this->y_, other.z_ - this->z_};
