@@ -2,6 +2,7 @@
 
 #include "geometry_ops.hpp"
 #include "plane3d.hpp"
+#include "triangle2d.hpp"
 
 #include <optional>
 #include <array>
@@ -84,7 +85,7 @@ private:
         return has_negative && has_positive;
     }
 
-    T select_axis() const {
+    int select_axis() const {
         Vector3D<T> n = normal();
         int max_axis = 0;
         T max_val = std::abs(n.x());
@@ -127,7 +128,15 @@ template <typename T>
 bool Triangle3D<T>::intersect_coplanar_triangles(const Triangle3D<T>& T0, const Triangle3D<T>& T1, 
     OptionalSegment &ops,  IntersectionMode im) const {
 
-    T max_axis = T0.select_axis();
+    int axis = T0.select_axis();
+
+    Point2D<T> t0p0 = T0[0].project(axis), t0p1 = T0[1].project(axis), t0p2 = T0[2].project(axis);
+    Point2D<T> t1p0 = T1[0].project(axis), t1p1 = T1[1].project(axis), t1p2 = T1[2].project(axis);
+
+    Triangle2D<T> t0_2d {t0p0, t0p1, t0p2};
+    Triangle2D<T> t1_2d = {t1p0, t1p1, t1p2};
+
+    return t0_2d.intersects(t1_2d);
 }
 
 }

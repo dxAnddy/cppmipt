@@ -18,7 +18,6 @@ private:
     using Base = Base2D<T>;
     using Base::x_;
     using Base::y_;
-    using Base::z_;
 
 public:
     Vector2D(T x, T y) noexcept :
@@ -52,7 +51,7 @@ public:
         return *this;
     }
 
-    T angle_to(const Vector2D &other, T eps = Epsilon<T>::epsilon_value) const {
+    T angle_to(const Vector2D &other, T eps = Epsilon<T>::epsilon_value()) const {
         T len1 = length();
         T len2 = other.length();
 
@@ -69,7 +68,7 @@ public:
     }
 
     Vector2D operator-(const Vector2D &other) const noexcept {
-        return Vector2D {x_ - other.x, y_ - other.y};
+        return Vector2D {x_ - other.x_, y_ - other.y_};
     }
 
     Vector2D operator/(T scalar) const {

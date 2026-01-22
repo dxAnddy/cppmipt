@@ -10,7 +10,7 @@ namespace geometry {
     
     template <typename T>
     Vector2D<T> Point2D<T>::operator-(const Point2D &other) const {
-        return Vector2D<T> {other.x_ - this->x_, other.y_ - this->y};
+        return Vector2D<T> {other.x_ - this->x_, other.y_ - this->y_};
     }
 
     template <typename T>
@@ -58,7 +58,7 @@ namespace geometry {
 
     template <typename T>
     bool on_segment(const Point2D<T> &p, const Point2D<T> &a, const Point2D<T> &b) {
-        bool px_in_acx = (p.x() >= std::min(a.x(), b.x()) && p.x <= std::max(a.x(), a.y()));
+        bool px_in_acx = (p.x() >= std::min(a.x(), b.x()) && p.x() <= std::max(a.x(), a.y()));
         bool py_in_acy = (p.y() >= std::min(a.y(), b.y()) && p.y() <= std::max(a.y(), b.y()));
         return px_in_acx && py_in_acy;
     }

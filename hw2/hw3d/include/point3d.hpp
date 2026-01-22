@@ -7,6 +7,9 @@ namespace geometry {
 template <typename>
 class Vector3D;
 
+template <typename>
+class Point2D;
+
 template <typename T>
 class Point3D : public Base3D<T>{
     static_assert(std::is_floating_point<T>::value, "Point3D requires floating point type");
@@ -18,6 +21,19 @@ public:
     template <typename U>
     Point3D(const Point3D<U> &other)
         : Base3D<T>(other) { 
+    }
+
+    Point2D<T> project(int axis) const {
+        switch (axis) {
+        case 0:
+            return Point2D<T> {this->y_, this->z_};
+        case 1:
+            return Point2D<T> {this->x_, this->z_};
+        case 2:
+            return Point2D<T> {this->x_, this->y_};
+        default:
+            throw std::invalid_argument("Invalid axis for projection. Must be 0, 1, or 2.");
+        }
     }
 
     T distance_to(const Point3D& other) const {
