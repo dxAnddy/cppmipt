@@ -127,7 +127,7 @@ template <typename T>
 bool Triangle3D<T>::intersect_coplanar_triangles(const Triangle3D<T>& T0, const Triangle3D<T>& T1, 
     OptionalSegment &ops,  IntersectionMode im) const {
 
-    T max_axis = select_axis();
+    T max_axis = T0.select_axis();
 }
 
 }
