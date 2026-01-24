@@ -117,7 +117,7 @@ public:
 };
 
 template <typename T>
-Vector2D<T> operator*(Vector2D<T> &vec, T scalar) {
+Vector2D<T> operator*(const Vector2D<T> &vec, T scalar) {
     return Vector2D<T> {
         vec.x() * scalar,
         vec.y() * scalar
@@ -125,7 +125,7 @@ Vector2D<T> operator*(Vector2D<T> &vec, T scalar) {
 }
 
 template <typename T>
-Vector2D<T> operator*(T scalar, Vector2D<T> &vec) {
+Vector2D<T> operator*(T scalar, const Vector2D<T> &vec) {
     return vec * scalar;
 }
 
