@@ -141,7 +141,7 @@ Vector3D<T> operator*(Vector3D<T> &vec, T scalar) noexcept {
 }
 
 template <typename T>
-Vector3D<T> operator*(T scalar, Vector3D<T> vec) noexcept {
+Vector3D<T> operator*(T scalar, Vector3D<T> &vec) noexcept {
     return vec * scalar;
 }
 

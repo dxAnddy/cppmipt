@@ -121,6 +121,12 @@ bool Triangle3D<T>::intersects_detail(const Triangle3D &other, OptionalSegment &
             return false;
     }
 
+    if(!has_different_signs(P1, T0, eps))
+        return false;
+
+    Vector3D<T> D = P0.normal().cross(P1.normal());
+    
+
     return true;
 }
 

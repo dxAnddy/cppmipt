@@ -52,11 +52,11 @@ public:
         return x_ne && y_ne;
     }
 
-    bool operator==(const Base2D &other) {
+    bool operator==(const Base2D &other) const {
         return equal(other);
     }
 
-    bool operator!=(const Base2D &other) {
+    bool operator!=(const Base2D &other) const {
         return !equal(other);
     }
 
