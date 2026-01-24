@@ -86,17 +86,15 @@ private:
 
     bool has_different_signs(const Plane3D<T> &P0, const Triangle3D<T> &T1, T eps) const {
         std::array<T, 3> signed_dists = compute_sdists(P0, T1);
-        bool has_positive = false, has_negative = false;
+        int pos = 0, neg = 0, zero = 0;
 
         for(T d : signed_dists) {
-            if(d > eps)
-                has_positive = true;
-            else if (d < -eps)
-                has_negative = true;
-            else
-                return true;
+            if(d > eps) pos++;
+            else if (d < -eps) neg++;
         }
-        return has_negative && has_positive;
+
+        if (pos == 3 || neg == 3) return false;
+        return true;
     }
 
     int select_axis() const {
