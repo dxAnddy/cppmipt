@@ -16,5 +16,36 @@ public:
     static std::vector<int> process(std::istream &input, Container<T> &con);
 };
 
+template <typename InsertFunc, typename QueryFunc>
+void Parser::parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc query) {
+    std::string token;
+    while(input >> token) {
+        if (token == "k") {
+            Key key;
+            if(!(input >> token))
+                throw std::runtime_error("Expected integer afyer 'k'");
+            insert(key);
+        } else if (token == "q") {
+            int left, right;
+            if(!(input >> left >> right))
+                throw std::runtime_error("Expected two integers after 'q'");
+            try {
+                QueryOp q(left, right);
+                query(q.left(), q.right());
+            } catch(const std::invalid_argument &e) {
+                throw std::runtime_error("Invalid range: " + e.what());
+            }
+        } else {
+            throw std::runtime_error("Unknown command '" + token + "'");
+        }
+
+    }
+}
+
+template <typename T>
+std::vector<int> Parser::process(std::istream &input, Container<T> &con) {
+
+}
+
 }
 
