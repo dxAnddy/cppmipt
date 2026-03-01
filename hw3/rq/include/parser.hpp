@@ -48,7 +48,7 @@ std::vector<int> Parser::process(std::istream &input, Container<T> &con) {
 
     parse_and_execute(input,
     [&](Key k) {
-        con.insert(k)
+        con.insert(k);
     },
     [&](int left, int right) {
         int count = con.count_in_range(left, right);

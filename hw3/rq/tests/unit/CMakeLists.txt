@@ -7,4 +7,4 @@ function(rq_test NAME SOURCE_FILE)
     message(STATUS "Built test ${NAME}")
 endfunction()
 
-rq_test(test test.cpp)
+rq_test(test test_parse.cpp)
