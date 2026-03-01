@@ -22,7 +22,7 @@ void Parser::parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc
     while(input >> token) {
         if (token == "k") {
             Key key;
-            if(!(input >> token))
+            if(!(input >> key))
                 throw std::runtime_error("Expected integer afyer 'k'");
             insert(key);
         } else if (token == "q") {
@@ -44,7 +44,17 @@ void Parser::parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc
 
 template <typename T>
 std::vector<int> Parser::process(std::istream &input, Container<T> &con) {
+    std::vector<int> result;
 
+    parse_and_execute(input,
+    [&](Key k) {
+        con.insert(k)
+    },
+    [&](int left, int right) {
+        int count = con.count_in_range(left, right);
+        result.push_back(count);
+    });
+    return result;
 }
 
 }
