@@ -33,7 +33,7 @@ void Parser::parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc
                 QueryOp q(left, right);
                 query(q.left(), q.right());
             } catch(const std::invalid_argument &e) {
-                throw std::runtime_error("Invalid range: " + e.what());
+                throw std::runtime_error(std::string("Invalid range: ") + e.what());
             }
         } else {
             throw std::runtime_error("Unknown command '" + token + "'");
