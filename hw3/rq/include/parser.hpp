@@ -7,7 +7,7 @@
 
 namespace range_queries {
 
-class Parser {
+class Parser final {
 private:
     template <typename InsertFunc, typename QueryFunc>
     static void parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc query);
