@@ -56,6 +56,31 @@ private:
         return grand_parent->left;
     }
 
+    void rotate_left(Node *node) noexcept {
+        Node *right_child = node->right;
+        if(!right_child) return;
+
+        node->right = right_child->left;
+        if(right_child->left)
+            right_child->left->parent = node;
+        
+        right_child->parent = node->parent;
+        
+        if(!node->parent) 
+            root_ = right_child;
+        else if(node->parent->left == node)
+            node->parent->left = right_child;
+        else
+            node->parent->right = right_child;
+            
+        right_child->left = node;
+        node->parent = right_child;
+    }
+
+    void rotate_right() noexcept {
+
+    }
+
 public:
     RBTree() noexcept : root_(nullptr) {}
 
