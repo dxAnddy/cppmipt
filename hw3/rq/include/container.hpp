@@ -1,3 +1,4 @@
+#pragma once
 namespace range_queries {
 
 template <typename T>

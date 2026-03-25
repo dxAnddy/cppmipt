@@ -23,7 +23,7 @@ void Parser::parse_and_execute(std::istream &input, InsertFunc insert, QueryFunc
         if (token == "k") {
             Key key;
             if(!(input >> key))
-                throw std::runtime_error("Expected integer afyer 'k'");
+                throw std::runtime_error("Expected integer after 'k'");
             insert(key);
         } else if (token == "q") {
             int left, right;
