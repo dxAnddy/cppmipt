@@ -77,8 +77,25 @@ private:
         node->parent = right_child;
     }
 
-    void rotate_right() noexcept {
+    void rotate_right(Node *node) noexcept {
+        Node *left_child = node->left;
+        if(!left_child) return;
 
+        node->left = left_child->right;
+        if(left_child->right)
+            left_child->right->parent = node;
+
+        left_child->parent = node->parent;
+
+        if(!node->parent)
+            root_ = left_child;
+        else if(node->parent->right == node)
+            node->parent->right = left_child;
+        else
+            node->parent->left = left_child;
+        
+        left_child->right = node;
+        node->parent = left_child;
     }
 
 public:
