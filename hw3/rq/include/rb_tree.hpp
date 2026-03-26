@@ -98,6 +98,10 @@ private:
         node->parent = left_child;
     }
 
+    void fix_insert(Node *node) noexcept {
+
+    }
+
 public:
     RBTree() noexcept : root_(nullptr) {}
 
@@ -109,7 +113,29 @@ public:
 
 template <typename T>
 void RBTree<T>::insert(const T& value) {
+    if(!root_) {
+        root_ = new Node(value);
+        set_color(root_, Color::BLACK);
+        return;
+    }
 
+    Node *current = root_;
+    Node *parent = nullptr;
+    while(current) {
+        parent = current;
+        if(current->value > value) current = current->left;
+        else if(current->value < value) current = current->right;
+        else return;
+    }
+
+    Node *node = new Node(value);
+    node->parent = parent;
+    if(value > parent->value)
+        parent->right = node;
+    else
+        parent->left = node;
+    
+    fix_insert(node);
 }
 
 template <typename T>
