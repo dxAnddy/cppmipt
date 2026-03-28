@@ -33,7 +33,7 @@ private:
         return node ? node->color : Color::BLACK;
     }
 
-    static void set_color(const Node *node, Color color) noexcept {
+    static void set_color(Node *node, Color color) noexcept {
         if(node) node->color = color;
     }
 
@@ -99,16 +99,37 @@ private:
     }
 
     void fix_insert(Node *node) noexcept {
+        while(node != root_ && get_color(node->parent) == Color::RED) {
+            Node *parent = node->parent;
+            Node *grand_parent = get_grand_parent(node);
+
+            if(!grand_parent) break;
+            
+            if(parent == grand_parent->left) {
+
+            } else {
+
+            }
+        }
+        set_color(root_, Color::BLACK);
+    }
+
+    void clear() {
 
     }
 
 public:
     RBTree() noexcept : root_(nullptr) {}
 
+    RBTree(const RBTree&) = delete;
+    RBTree& operator=(const RBTree&) = delete;
+
     void insert(const T& value) override;
     int count_in_range(const T& left, const T& right) const override;
 
-    ~RBTree() = default;
+    ~RBTree() { 
+        clear();
+    }
 };
 
 template <typename T>
