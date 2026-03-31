@@ -10,6 +10,7 @@ template <typename T>
 class RBTree final : public Container<T> {
 private:
 
+    friend class RBTreeTest;
     enum class Color { RED, BLACK };
     struct Node {
         T value;
@@ -107,9 +108,41 @@ private:
             if(!grand_parent) break;
             
             if(parent == grand_parent->left) {
-
+                Node *uncle = grand_parent->right;
+                if(get_color(uncle) == Color::RED) {
+                    set_color(uncle, Color::BLACK);
+                    set_color(parent, Color::BLACK);
+                    set_color(grand_parent, Color::RED);
+                    node = grand_parent;
+                } else {
+                    if(node == parent->right) {
+                        node = parent;
+                        rotate_left(node);
+                        parent = node->parent;
+                        grand_parent = get_grand_parent(node);
+                    }
+                    set_color(parent, Color::BLACK);
+                    set_color(grand_parent, Color::RED);
+                    rotate_right(grand_parent);
+                }
             } else {
-
+                Node* uncle = grand_parent->left;
+                if (get_color(uncle) == Color::RED) {
+                    set_color(parent, Color::BLACK);
+                    set_color(uncle, Color::BLACK);
+                    set_color(grand_parent, Color::RED);
+                    node = grand_parent;
+                } else {
+                    if (node == parent->left) {
+                        node = parent;
+                        rotate_right(node);
+                        parent = node->parent;
+                        grand_parent = get_grand_parent(node);
+                    }
+                    set_color(parent, Color::BLACK);
+                    set_color(grand_parent, Color::RED);
+                    rotate_left(grand_parent);
+                }
             }
         }
         set_color(root_, Color::BLACK);
