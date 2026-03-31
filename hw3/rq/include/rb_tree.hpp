@@ -2,6 +2,7 @@
 
 #include "container.hpp"
 #include <memory>
+#include <stack>
 
 namespace range_queries {
 
@@ -115,7 +116,20 @@ private:
     }
 
     void clear() {
+        if(!root_)
+            return;
+        std::stack<Node *> Snodes;
+        Snodes.push(root_);
+        
+        while(!Snodes.empty()) {
+            Node *nd = Snodes.top();
+            Snodes.pop();
 
+            if(nd->left) Snodes.push(nd->left);
+            if(nd->right) Snodes.push(nd->right);
+
+            delete nd;
+        }
     }
 
 public:
