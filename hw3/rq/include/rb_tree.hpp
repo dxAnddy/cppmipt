@@ -174,6 +174,8 @@ public:
     void insert(const T& value) override;
     int count_in_range(const T& left, const T& right) const override;
 
+    const Node* get_root() const noexcept {return root_;}
+    
     ~RBTree() { 
         clear();
     }
