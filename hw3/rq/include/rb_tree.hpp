@@ -10,7 +10,6 @@ template <typename T>
 class RBTree final : public Container<T> {
 private:
 
-    friend class RBTreeTest;
     enum class Color { RED, BLACK };
     struct Node {
         T value;
@@ -175,10 +174,23 @@ public:
     int count_in_range(const T& left, const T& right) const override;
 
     const Node* get_root() const noexcept {return root_;}
-    
+
     ~RBTree() { 
         clear();
     }
+
+    #ifdef RBTREE_TESTING
+
+    friend class RBTreeTest;
+
+    static bool is_red(const Node* node) noexcept {
+        return node && node->color == Color::RED;
+    }
+    
+    static bool is_black(const Node* node) noexcept {
+        return !node || node->color == Color::BLACK;
+    }
+    #endif
 };
 
 template <typename T>

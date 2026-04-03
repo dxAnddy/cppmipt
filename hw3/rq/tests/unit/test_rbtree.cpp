@@ -18,11 +18,15 @@ protected:
     }
 
     bool isRedBlackTree() const {
-        return isBST();
+        return isBST() && noRedViolation();
     }
 
     int countNodes() const {
         return countNodeImpl(tree.get_root());
+    }
+
+    bool noRedViolation() const {
+        return noRedViolationImpl(tree.get_root());
     }
 
 private:
@@ -40,6 +44,16 @@ private:
     int countNodeImpl(NodePtr node) const {
         if(!node) return 0;
         return 1 + countNodeImpl(node->left) + countNodeImpl(node->right);
+    }
+
+    template <typename NodePtr>
+    bool noRedViolationImpl(NodePtr node) const {
+        if(!node) return true;
+
+        if(RBTree<int>::is_red(node))
+            if(RBTree<int>::is_red(node->left) || RBTree<int>::is_red(node->right))
+                return false;
+        return noRedViolationImpl(node->left) && noRedViolationImpl(node->right);
     }
 };
 
