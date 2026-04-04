@@ -8,9 +8,10 @@
 
 using namespace range_queries;
 
+template <typename T>
 class RBTreeTest : public ::testing::Test {
 protected:
-    RBTree<int> tree;
+    RBTree<T> tree;
 
     bool isBST() const {
         const auto *r = tree.get_root();
@@ -18,7 +19,7 @@ protected:
     }
 
     bool isRedBlackTree() const {
-        return isBST() && noRedViolation();
+        return isBST() && noRedViolation() && isRootBlack() && hasConsistentBlackH();
     }
 
     int countNodes() const {
@@ -27,6 +28,15 @@ protected:
 
     bool noRedViolation() const {
         return noRedViolationImpl(tree.get_root());
+    }
+
+    bool isRootBlack() const {
+        return  RBTree<T>::is_black(tree.get_root());
+    }
+
+    bool hasConsistentBlackH() const {
+        int expected = -1;
+        return hasConsistentBlackHImpl(tree.get_root(), 0, expected);
     }
 
 private:
@@ -50,21 +60,41 @@ private:
     bool noRedViolationImpl(NodePtr node) const {
         if(!node) return true;
 
-        if(RBTree<int>::is_red(node))
-            if(RBTree<int>::is_red(node->left) || RBTree<int>::is_red(node->right))
+        if(RBTree<T>::is_red(node))
+            if(RBTree<T>::is_red(node->left) || RBTree<T>::is_red(node->right))
                 return false;
         return noRedViolationImpl(node->left) && noRedViolationImpl(node->right);
     }
+
+    template <typename NodePtr>
+    bool hasConsistentBlackHImpl(NodePtr node, int current, int &expected) const {
+        if(!node) {
+            if(expected = -1) {
+                expected = current;
+                return true;
+            }
+            return expected == current;
+        }
+        if(RBTree<T>::is_red(node))
+            current++;
+        
+        return hasConsistentBlackHImpl(node->left, current, expected) &&
+        hasConsistentBlackHImpl(node->right, current, expected);
+
+    }
+
 };
 
-TEST_F(RBTreeTest, InsertThreeElemtns) {
+using RBTreeIntTest = RBTreeTest<int>;
+
+TEST_F(RBTreeIntTest, InsertThreeElemtns) {
     tree.insert(10);
     tree.insert(20);
     tree.insert(30);
     EXPECT_EQ(countNodes(), 3);
 }
 
-TEST_F(RBTreeTest, InsertDuplicatesMixed) {
+TEST_F(RBTreeIntTest, InsertDuplicatesMixed) {
     tree.insert(5);
     tree.insert(3);
     tree.insert(5);
@@ -75,7 +105,7 @@ TEST_F(RBTreeTest, InsertDuplicatesMixed) {
     EXPECT_TRUE(isRedBlackTree());
 }
 
-TEST_F(RBTreeTest, InsertManyElementsAscending) {
+TEST_F(RBTreeIntTest, InsertManyElementsAscending) {
     const int N = 500;
     for (int i = 0; i < N; ++i) {
         tree.insert(i);
@@ -85,7 +115,7 @@ TEST_F(RBTreeTest, InsertManyElementsAscending) {
     EXPECT_TRUE(isRedBlackTree());
 }
 
-TEST_F(RBTreeTest, TreeDepthIsLogarithmic) {
+TEST_F(RBTreeIntTest, TreeDepthIsLogarithmic) {
     const int N = 10000;
     for (int i = 0; i < N; ++i) {
         tree.insert(i);
@@ -95,7 +125,7 @@ TEST_F(RBTreeTest, TreeDepthIsLogarithmic) {
     EXPECT_EQ(countNodes(), N);
 }
 
-TEST_F(RBTreeTest, InsertRandomElements) {
+TEST_F(RBTreeIntTest, InsertRandomElements) {
     std::vector<int> values(200);
     std::random_device rd;
     std::mt19937 gen(rd());
