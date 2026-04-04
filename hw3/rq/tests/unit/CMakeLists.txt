@@ -1,0 +1,12 @@
+find_package(GTest REQUIRED)
+
+function(rq_test NAME SOURCE_FILE)
+    add_executable(${NAME} ${SOURCE_FILE})
+    target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
+    target_compile_definitions(${NAME} PRIVATE RBTREE_TESTING)
+    target_link_libraries(${NAME} range_queries_lib GTest::gtest GTest::gtest_main)
+    message(STATUS "Built test ${NAME}")
+endfunction()
+
+rq_test(test_parse test_parse.cpp)
+rq_test(test_rb test_rbtree.cpp)
