@@ -221,8 +221,37 @@ void RBTree<T>::insert(const T& value) {
 }
 
 template <typename T>
-int RBTree<T>::count_in_range(const T&left, const T& right) const {
+int RBTree<T>::count_in_range(const T& left, const T& right) const {
+    std::stack<const Node*> stack;
+    const Node *current = root_;
+    int count = 0;
 
+    while(current || !stack.empty()) {
+        while(current) {
+            if(current->value < left) {
+                current = current->right;
+                continue;
+            }
+            stack.push(current);
+            current = current->left;
+        }
+
+        if(!stack.empty()) {
+            current = stack.top();
+            stack.pop();
+            
+            if(current->value >= left && current->value <= right)
+                count++;
+            
+            if(current->value > right)
+                current = nullptr;
+            else
+                current = current->right;
+            
+        } 
+    }
+
+    return count;
 }
 
 }
