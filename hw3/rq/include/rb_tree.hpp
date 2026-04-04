@@ -3,6 +3,7 @@
 #include "container.hpp"
 #include <memory>
 #include <stack>
+#include <cassert>
 
 namespace range_queries {
 
@@ -222,6 +223,7 @@ void RBTree<T>::insert(const T& value) {
 
 template <typename T>
 int RBTree<T>::count_in_range(const T& left, const T& right) const {
+    assert(left <= right);
     std::stack<const Node*> stack;
     const Node *current = root_;
     int count = 0;

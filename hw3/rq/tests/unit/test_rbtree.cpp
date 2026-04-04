@@ -3,6 +3,7 @@
 #include <random>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include <rb_tree.hpp>
 
 
@@ -141,4 +142,42 @@ TEST_F(RBTreeIntTest, InsertRandomElements) {
 
     EXPECT_TRUE(isRedBlackTree());
     EXPECT_EQ(countNodes(), unique_values.size());
+}
+
+TEST_F(RBTreeIntTest, CountInRangeDynamic) {
+    EXPECT_EQ(tree.count_in_range(1, 10), 0);
+    
+    tree.insert(5);
+    EXPECT_EQ(tree.count_in_range(1, 10), 1);
+    
+    tree.insert(7);
+    EXPECT_EQ(tree.count_in_range(1, 10), 2);
+    
+    tree.insert(3);
+    EXPECT_EQ(tree.count_in_range(1, 10), 3);
+    
+    tree.insert(15);
+    EXPECT_EQ(tree.count_in_range(1, 10), 3);
+    EXPECT_EQ(tree.count_in_range(10, 20), 1);
+}
+
+TEST_F(RBTreeIntTest, CountInRangeRandom) {
+    std::vector<int> values(500);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution <> dist {-1000, 1000};
+
+    for(int i = 0; i < 500; i++)
+        values[i] = dist(gen);
+    
+    std::set<int> uniq {values.begin(), values.end()};
+    for(int i = 0; i < 10; i ++) {
+        int left = dist(gen);
+        int right = left + dist(gen) % 100;
+
+        int expected = std::count_if(uniq.begin(), uniq.end(), [left, right](int v) {
+            return v >= left && v <= right;});
+        EXPECT_EQ(tree.count_in_range(left, right), expected);
+    }
+
 }
