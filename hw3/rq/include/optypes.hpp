@@ -8,7 +8,7 @@ namespace range_queries {
 using Key = int;
 using Range = std::pair<int, int>;
 
-class QueryOp {
+class QueryOp final {
 private:
     int left_;
     int right_;
@@ -30,7 +30,7 @@ public:
     }
 };
 
-class InsertOp {
+class InsertOp final {
 private:
     Key key_;
 public:
