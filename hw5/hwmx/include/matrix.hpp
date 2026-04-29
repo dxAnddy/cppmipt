@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <utility>
 #include <stdexcept>
+#include <algorithm>
 
 namespace matrix {
 
@@ -32,17 +33,27 @@ private:
         }
     };
 
-void allocate_mem() {
-    data = new T[rows * cols]();
-    try {
-        rows_ptrs = new T*[rows];
-        for(size_t i = 0; i < rows; i++)
-            rows_ptrs[i] = data + i * cols;
-    } catch (...) {
-        delete []data;
-        throw;
+    void allocate_mem() {
+        data = new T[rows * cols]();
+        try {
+            rows_ptrs = new T*[rows];
+            for(size_t i = 0; i < rows; i++)
+                rows_ptrs[i] = data + i * cols;
+        } catch (...) {
+            delete []data;
+            throw;
+        }
     }
-}
+
+    template<typename U>
+        Matrix<U> cast() const {
+            Matrix<U> result(rows, cols);
+            std::transform(data, data + (rows * cols), result.begin(), 
+        [](T val) {return static_cast<U>(val);});
+            return result;
+        }
+
+        template <typename> friend class Matrix;
 
 public:
 
@@ -101,10 +112,46 @@ public:
         return data + (rows * cols);
     }
 
-    T determinant() const {
+    double determinant() const {
         if(cols != rows)
             throw std::runtime_error("Matrix must be square to calculate determinant");
         
+        Matrix<double> tmp = cast<double>();
+        
+        const double eps = 1e-10;
+        double det = 1.0;
+        size_t n = rows;
+        
+        for(size_t i = 0; i < n; i++) {
+            size_t max_row = i;
+            double max_v = std::abs(tmp.rows_ptrs[i][i]);
+            
+            for(size_t j = i + 1; j < n; j++) {
+                double val = std::abs(tmp.rows_ptrs[j][i]);
+                if(val > max_v) {
+                    max_v = val;
+                    max_row = j;
+                }
+            }
+            
+            if(max_v <= eps)
+                return 0.0;
+            
+            if(i != max_row) {
+                std::swap(tmp.rows_ptrs[i], tmp.rows_ptrs[max_row]);
+                det = -det;
+            }
+            
+            det *= tmp.rows_ptrs[i][i];
+            
+            for(size_t k = i + 1; k < n; k++) {
+                double factor = tmp.rows_ptrs[k][i] / tmp.rows_ptrs[i][i];
+                for(size_t l = i; l < n; l++) {
+                    tmp.rows_ptrs[k][l] -= factor * tmp.rows_ptrs[i][l];
+                }
+            }
+        }
+        return det;
     }
     
     size_t size() const noexcept { return rows * cols; }
