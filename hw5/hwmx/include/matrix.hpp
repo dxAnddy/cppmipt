@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <utility>
+#include <stdexcept>
 
 namespace matrix {
 
@@ -11,12 +12,23 @@ private:
     T** rows_ptrs;
     size_t rows;
     size_t cols;
+    
     template <typename U>
     struct ProxyRow {
         U *row_ptr;
-        ProxyRow(U *ptr) : row_ptr(ptr) {}
-        auto &operator[](size_t n) const {
+        size_t cols;
+
+        ProxyRow(U *ptr, size_t c) : row_ptr(ptr), cols(c) {}
+        U &operator[](size_t n) const {
             return row_ptr[n];
+        }
+
+        U* begin() {
+            return row_ptr;
+        }
+
+        U* end() {
+            return row_ptr + cols;
         }
     };
 
@@ -74,17 +86,32 @@ public:
     }
 
     ProxyRow<T> operator[](size_t n) {
-        return ProxyRow<T>{rows_ptrs[n]};
+        return ProxyRow<T>{rows_ptrs[n], cols};
     }
 
     ProxyRow<const T> operator[](size_t n) const {
-        return ProxyRow<const T>{rows_ptrs[n]};
+        return ProxyRow<const T>{rows_ptrs[n], cols};
+    }
+
+    T *begin() {
+        return data;
+    }
+
+    T *end() {
+        return data + (rows * cols);
     }
 
     T determinant() const {
-
+        if(cols != rows)
+            throw std::runtime_error("Matrix must be square to calculate determinant");
+        
     }
     
+    size_t size() const noexcept { return rows * cols; }
+    size_t get_rows() const noexcept { return rows;}
+    size_t get_cols() const noexcept {return cols;}
+
+
     virtual ~Matrix() {
         delete[] data;
         delete[] rows_ptrs;
