@@ -3,14 +3,15 @@
 #include <utility>
 #include <stdexcept>
 #include <algorithm>
+#include <initializer_list>
 
 namespace matrix {
 
 template <typename T>
 class Matrix {
 private:
-    T* data;
-    T** rows_ptrs;
+    T* data = nullptr;
+    T** rows_ptrs = nullptr;
     size_t rows;
     size_t cols;
     
@@ -45,6 +46,11 @@ private:
         }
     }
 
+    void free_data() noexcept {
+        delete[] data;
+        delete[] rows_ptrs;
+    }
+
     template<typename U>
         Matrix<U> cast() const {
             Matrix<U> result(rows, cols);
@@ -57,18 +63,59 @@ private:
 
 public:
 
-    Matrix(size_t r, size_t c) : rows(r), cols(c), data(nullptr), rows_ptrs(nullptr) {
+    Matrix(size_t r, size_t c) : rows(r), cols(c) {
         allocate_mem();
     }
 
-    Matrix(const Matrix &other) : rows(other.rows), cols(other.cols), data(nullptr), rows_ptrs(nullptr) {
+    Matrix(const Matrix &other) : rows(other.rows), cols(other.cols) {
         allocate_mem();
         try {
             std::copy(other.data, other.data + (rows * cols), data);
         } catch (...) {
-            delete[] data;
-            delete[] rows_ptrs;
+            free_data();
             throw;
+        }
+    }
+
+    Matrix(std::initializer_list<std::initializer_list<T>> init) : 
+        rows(init.size()) {
+        
+        if(rows == 0) {
+            cols = 0;
+            return;
+        }
+
+        cols  = init.begin()->size();
+
+        for(auto &&row : init) {
+            if(row.size() != cols)
+                throw std::runtime_error("All rows must have the same size");
+        }
+
+        allocate_mem();
+        size_t i = 0;
+        for(auto &&row : init) {
+            try{
+                std::copy(row.begin(), row.end(), rows_ptrs[i++]);
+            } catch (...) {
+                free_data();
+                throw;
+            }
+        }
+
+    }
+
+    Matrix(std::initializer_list<T> init) : cols(init.size()) {
+        if(cols == 0) {
+            rows = 0;
+            return;
+        }
+        rows = 1;
+        allocate_mem();
+        try {
+            std::copy(init.begin(), init.end(), data);
+        } catch(...) {
+            free_data();
         }
     }
 
@@ -160,8 +207,7 @@ public:
 
 
     virtual ~Matrix() {
-        delete[] data;
-        delete[] rows_ptrs;
+        free_data();
     }
 };
 
