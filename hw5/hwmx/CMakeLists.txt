@@ -12,5 +12,14 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
+add_library(matrix_lib INTERFACE)
+target_include_directories(matrix_lib INTERFACE include)
+
 add_executable(matrix src/main.cpp)
-target_include_directories(matrix PRIVATE include)
+target_link_libraries(matrix PRIVATE matrix_lib)
+
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    message(STATUS "Building tests")
+    add_subdirectory(tests/unit)
+endif()
