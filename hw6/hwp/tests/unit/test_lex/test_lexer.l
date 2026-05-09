@@ -7,6 +7,10 @@
 #include <iomanip>
 #include <string>
 
+//flex -o test.cpp test_lexer.l
+//g++ test.cpp -o test
+//./test < ../../code_ex/fibs_p/fibs.pcl
+
 int error_count = 0;
 const int COL_WIDTH = 20;
 
