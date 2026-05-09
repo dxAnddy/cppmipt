@@ -44,21 +44,38 @@ namespace yy { class Driver; }
     PRINT   "print"
 ;
 
+%nterm <Node*> expr 
+%nterm <Node*> statement 
+%nterm <Node*> assignment 
+%nterm <Node*> print
+
 %right '='
 %left  EQUAL NEQUAL
 %left  '<' '>' LEQ GEQ 
 %left  '+' '-'
 %left '+' '-'
 %left '*' '/'
+%precedence UMINUS
 
 %start program
 
 %%
 
-program 
+program : statement
+        | program statement
 
+statement : assignment
+          | PRINT SCOLON
+          
+assignment : IDENTIFIER ASSIGN expr SCOLON
 
-
+expr : NUMBER
+     | IDENTIFIER
+     | expr PLUS expr
+     | expr MINUS expr
+     | expr MUL expr
+     | expr DIV expr
+     | MINUS expr %prec UMINUS
 %%
 
 void yy::parser::error(const std::string& msg) {
